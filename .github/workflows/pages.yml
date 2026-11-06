@@ -1,0 +1,85 @@
+name: Validate and deploy website
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+      - name: Validate HTML and local assets
+        run: |
+          python - <<'PY'
+          from html.parser import HTMLParser
+          from pathlib import Path
+          from urllib.parse import urlsplit
+          import re
+
+          root = Path(".")
+          document = (root / "index.html").read_text(encoding="utf-8")
+
+          class SiteParser(HTMLParser):
+              def __init__(self):
+                  super().__init__()
+                  self.tags = []
+                  self.assets = []
+
+              def handle_starttag(self, tag, attrs):
+                  self.tags.append(tag)
+                  for name, value in attrs:
+                      if name in {"href", "src"} and value:
+                          parsed = urlsplit(value)
+                          if not parsed.scheme and not parsed.netloc and parsed.path:
+                              self.assets.append(parsed.path)
+
+          parser = SiteParser()
+          parser.feed(document)
+          parser.close()
+
+          if parser.tags.count("html") != 1 or "head" not in parser.tags or "body" not in parser.tags:
+              raise SystemExit("index.html must contain one html element and head/body sections")
+
+          assets = set(parser.assets)
+          assets.update(re.findall(r"url\(['\"]?([^'\")]+)", document))
+          missing = sorted(
+              asset for asset in assets
+              if not asset.startswith("data:")
+              and not (root / asset.lstrip("/")).is_file()
+          )
+          if missing:
+              raise SystemExit(f"Missing local assets: {', '.join(missing)}")
+
+          if (root / "CNAME").read_text(encoding="utf-8").strip() != "luisriego.dev":
+              raise SystemExit("CNAME must contain luisriego.dev")
+          PY
+
+  deploy:
+    needs: validate
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: .
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
