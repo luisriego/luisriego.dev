@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Conector Bizum → Holded | Luis Riego</title>
-  <meta name="description" content="Automatiza la conciliación de tus cobros Bizum de Monei en Holded. Facturas, pagos y avisos de revisión en un flujo adaptado a tu negocio.">
+  <title>Conciliación de cobros Bizum en Holded | Luis Riego</title>
+  <meta name="description" content="Conciliación automática de tus cobros Bizum en Holded, disponible hoy para Monei. Encuentra o crea la factura, registra el pago sin duplicados y audita cada mes que nada se ha descuadrado.">
   <meta name="theme-color" content="#111313">
   <link rel="canonical" href="https://luisriego.dev/">
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23111313'/%3E%3Ctext x='16' y='22.5' text-anchor='middle' font-family='Georgia,serif' font-style='italic' font-size='19' fill='%23d3f36b'%3Elr%3C/text%3E%3C/svg%3E">
@@ -12,8 +12,8 @@
   <meta property="og:type" content="website">
   <meta property="og:locale" content="es_ES">
   <meta property="og:url" content="https://luisriego.dev/">
-  <meta property="og:title" content="Conector Bizum → Holded | Luis Riego">
-  <meta property="og:description" content="Concilia automáticamente los cobros Bizum de Monei en Holded, con revisión segura de las excepciones.">
+  <meta property="og:title" content="Conciliación de cobros Bizum en Holded | Luis Riego">
+  <meta property="og:description" content="Concilia automáticamente los cobros Bizum de Monei en Holded y bloquea cualquier descuadre antes de que llegue a tu contabilidad.">
   <meta name="twitter:card" content="summary">
   <!-- Añadir og:image / twitter:image cuando exista una imagen de 1200×630 -->
 
@@ -246,6 +246,7 @@
     .panel.after li::before { border-color: rgba(211, 243, 107, .5); background: rgba(211, 243, 107, .12); color: var(--lime); }
     .panel-foot { margin: 24px 0 0; padding-top: 18px; border-top: 1px solid var(--line); color: var(--dim); font-size: 14px; }
     .after .panel-foot { color: #cdd7b3; }
+    .compare-note { margin: 22px 0 0; max-width: 780px; color: var(--dim); font-size: 15px; line-height: 1.7; }
 
     /* Services */
     .services { display: grid; grid-template-columns: 1.15fr 1fr; grid-template-rows: auto auto; gap: 16px; margin-top: 40px; }
@@ -301,8 +302,6 @@
     .checklist ul { margin: 0; padding: 0; list-style: none; display: grid; gap: 15px; }
     .checklist li { display: flex; gap: 12px; align-items: flex-start; color: #dfe2d9; font-size: 15px; }
     .checklist li .icon { margin-top: 5px; color: var(--lime); }
-    .link-arrow { display: inline-flex; align-items: center; gap: 8px; color: var(--lime); font-weight: 650; font-size: 15px; text-decoration: none; }
-    .link-arrow:hover { text-decoration: underline; text-underline-offset: 4px; }
 
     /* About */
     .about { display: grid; grid-template-columns: 300px 1fr; gap: clamp(32px, 6vw, 80px); align-items: start; }
@@ -315,7 +314,6 @@
     .portrait .initials { color: var(--lime); font-family: var(--serif); font-size: 96px; font-style: italic; line-height: 1; }
     .about h2 { max-width: 560px; margin-bottom: 22px; }
     .about p:not(.kicker) { margin: 0 0 16px; max-width: 580px; color: var(--muted); font-size: 16px; line-height: 1.8; }
-    .text-link { color: var(--paper); text-underline-offset: 3px; }
     .facts { display: flex; flex-wrap: wrap; gap: 10px 28px; margin-top: 28px; padding-top: 24px; border-top: 1px solid var(--line); }
     .facts div { min-width: 120px; }
     .facts strong { display: block; font-family: var(--serif); font-size: 34px; font-weight: 400; line-height: 1.1; color: var(--paper); }
@@ -353,6 +351,18 @@
     .contact h2 em { color: #2f3d15; }
     .contact p.lead { color: #3d4c22; max-width: 520px; }
     .contact .actions { margin-top: 30px; }
+    .contact-form { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 14px; margin-top: 28px; }
+    .contact-form .field { display: grid; gap: 6px; }
+    .contact-form label { color: #3d4c22; font-size: 13px; font-weight: 650; }
+    .contact-form select, .contact-form input {
+      min-height: 48px; padding: 0 14px;
+      border: 1px solid rgba(29, 37, 18, .35); border-radius: 6px;
+      background: rgba(255, 255, 255, .6); color: var(--lime-ink);
+      font: inherit; font-size: 15px;
+    }
+    .contact-form input { min-width: min(260px, 100%); }
+    .contact-form ::placeholder { color: rgba(29, 37, 18, .55); }
+    .form-alt { margin: 20px 0 0; color: #3d4c22; font-size: 14px; }
     .contact .button-primary { background: var(--lime-ink); color: var(--paper); }
     .contact .button-primary:hover { background: #2d3a1c; }
     .contact .button-ghost { border-color: rgba(29, 37, 18, .35); color: var(--lime-ink); }
@@ -381,11 +391,12 @@
     }
     @media (max-width: 720px) {
       .wrap { width: min(100% - 36px, 600px); }
-      .nav a:not(.button) { display: none; }
+      .nav a:not(.button):not(.nav-keep) { display: none; }
       .compare { grid-template-columns: 1fr; }
       .visual { min-height: 0; }
       .actions .button { width: 100%; }
       .contact .actions { flex-direction: column; }
+      .contact-form { flex-direction: column; align-items: stretch; }
     }
     @media (prefers-reduced-motion: reduce) {
       html { scroll-behavior: auto; }
@@ -411,11 +422,11 @@
       <a class="wordmark" href="#" aria-label="Luis Riego, inicio">luisriego<span>.</span>dev</a>
       <nav class="nav" aria-label="Principal">
         <a href="#servicios">Servicios</a>
-        <a href="#precios">Precios</a>
+        <a class="nav-keep" href="#precios">Precios</a>
         <a href="#como-trabajo">Cómo trabajo</a>
         <a href="#preguntas">Preguntas</a>
         <a class="button button-primary button-small" href="#contacto">
-          <svg class="icon" aria-hidden="true"><use href="#i-chat"/></svg> Contratar
+          <svg class="icon" aria-hidden="true"><use href="#i-chat"/></svg> Información
         </a>
       </nav>
     </div>
@@ -424,14 +435,14 @@
   <main id="contenido">
     <section class="wrap hero" aria-labelledby="titulo">
       <div>
-        <span class="eyebrow">Conector Monei → Holded</span>
+        <span class="eyebrow">Conciliación Bizum → Holded · hoy con Monei</span>
         <h1 id="titulo">Tus cobros Bizum, <em>conciliados sin trabajo manual.</em></h1>
         <p class="lead">
-          El conector registra en Holded los cobros Bizum recibidos por Monei, crea o encuentra la factura y deja las excepciones listas para revisar. Lo configuro según el flujo de tu negocio.
+          ¿Facturas en Holded y cobras Bizum por enlace de pago, QR, WhatsApp o tienda online? El conector casa cada cobro de Monei con su factura en Holded, la marca como pagada sin duplicados y audita cada mes que nada se ha borrado ni descuadrado. Redsys y Stripe, bajo consulta.
         </p>
         <div class="actions">
           <a class="button button-primary" href="#contacto">
-            <svg class="icon" aria-hidden="true"><use href="#i-chat"/></svg> Solicitar contratación
+            <svg class="icon" aria-hidden="true"><use href="#i-chat"/></svg> Solicitar información
           </a>
           <a class="button button-ghost" href="#como-funciona">
             Ver cómo funciona <svg class="icon" aria-hidden="true"><use href="#i-down"/></svg>
@@ -442,7 +453,7 @@
 
       <div class="visual">
         <div class="dots" aria-hidden="true"></div>
-        <div class="flow-card" role="img" aria-label="Un cobro Bizum de Monei se concilia con su factura en Holded y se registra como pagado">
+        <div class="flow-card">
           <div class="card-top">
             <span class="card-title">Un cobro, conciliado en Holded</span>
             <span class="badge-example">Monei → Holded</span>
@@ -453,11 +464,11 @@
             <div class="amount">+ 84,50 €</div>
           </div>
           <ol class="steps">
-            <li><span>01</span> Factura creada en el ERP</li>
+            <li><span>01</span> Factura encontrada o creada en Holded</li>
             <li><span>02</span> Marcada como pagada (Bizum)</li>
-            <li><span>03</span> Asiento contable hecho</li>
+            <li><span>03</span> Conciliada y auditada en tesorería</li>
           </ol>
-          <div class="card-foot"><span>Si hay dudas, pasa a revisión.</span><strong>Menos tareas manuales</strong></div>
+          <div class="card-foot"><span>Nada se registra a ciegas.</span><strong>Cero conciliación manual</strong></div>
         </div>
       </div>
     </section>
@@ -468,7 +479,7 @@
         <div class="chips">
           <span class="chip now">Monei · Bizum</span>
           <span class="chip now">Holded</span>
-          <span class="chip later">Otras integraciones: a medida</span>
+          <span class="chip later">Redsys y Stripe: bajo consulta</span>
         </div>
       </div>
     </div>
@@ -487,9 +498,9 @@
           <ol>
             <li>Entra un cobro Bizum en la pasarela.</li>
             <li>Alguien abre el panel y localiza el pedido.</li>
-            <li>Busca o crea la factura en el ERP.</li>
+            <li>Busca o crea la factura en Holded.</li>
             <li>La marca como pagada.</li>
-            <li>Registra el asiento contable.</li>
+            <li>Y a fin de mes cuadra a mano la liquidación de la pasarela y sus comisiones.</li>
           </ol>
           <p class="panel-foot">Se repite con cada cobro, y un descuido genera descuadres.</p>
         </div>
@@ -500,11 +511,12 @@
             <li>El conector busca la factura que corresponde en Holded.</li>
             <li>Si está habilitado, crea la factura cuando hace falta.</li>
             <li>Registra el pago en Holded sin duplicarlo.</li>
-            <li>Si hay dudas, te pide revisión antes de registrar.</li>
+            <li>Bloquea pagos parciales, ambiguos o duplicados: los resuelves en 1 clic desde tu correo.</li>
           </ol>
-          <p class="panel-foot">Cada operación queda registrada y las excepciones no se resuelven a ciegas.</p>
+          <p class="panel-foot">Cada operación queda registrada: cero duplicados, cero descuadres a ciegas.</p>
         </div>
       </div>
+      <p class="compare-note">Pensado para negocios que facturan en Holded y cobran Bizum por enlace de pago, QR, WhatsApp o teléfono: clínicas, academias, talleres, servicios y B2B. ¿Tu tienda Shopify o WooCommerce ya crea la factura? Mejor todavía: el conector la encuentra y concilia su cobro, que es justo donde el plugin estándar de la tienda se queda corto.</p>
     </section>
 
     <section class="wrap section reveal" id="servicios" aria-labelledby="t-services">
@@ -514,24 +526,24 @@
         <article class="service main">
           <span class="tag">Producto principal</span>
           <h3>Conector Bizum → Holded</h3>
-          <p>Automatiza el registro de los cobros Bizum que recibes en Monei. Adapto su configuración a tu forma de facturar y a las reglas de tu negocio.</p>
+          <p>Automatiza la conciliación de los cobros Bizum que recibes en Monei: enlace de pago, QR, WhatsApp o tienda online. Adapto su configuración a tu forma de facturar y a las reglas de tu negocio.</p>
           <ul>
-            <li><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg> Busca y concilia facturas pendientes en Holded</li>
-            <li><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg> Puede crear facturas según la configuración acordada</li>
-            <li><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg> Registra el cobro Bizum y evita duplicados</li>
-            <li><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg> Avisa cuando una operación necesita revisión</li>
+            <li><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg> Casa cada Bizum con su factura pendiente en Holded, por pedido o por email e importe exacto</li>
+            <li><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg> Crea la factura de servicio cuando aún no existe, en la serie acordada</li>
+            <li><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg> Bloquea pagos parciales, ambiguos o duplicados; los resuelves en 1 clic desde tu correo</li>
+            <li><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg> Audita al cierre de mes que nadie haya borrado o modificado facturas y cobros en Holded</li>
           </ul>
-          <div class="push"><span class="pill">Instalación y configuración adaptadas a tu negocio</span></div>
+          <div class="push"><span class="pill">Alta estándar Monei → Holded · instalación 0 € en los primeros 100 contratos</span></div>
         </article>
         <article class="service">
           <span class="tag">A medida</span>
           <h3>Integraciones entre tus herramientas</h3>
-          <p>¿Usas otra pasarela o ERP? Cuéntame tu caso y valoro contigo una integración a medida.</p>
+          <p>¿Cobras con Redsys o Stripe, o usas otro ERP como Sage 50? Cuéntame tu caso y valoramos una integración a medida, presupuestada aparte.</p>
         </article>
         <article class="service">
           <span class="tag">Automatización</span>
           <h3>Adiós a las tareas repetitivas</h3>
-          <p>Automatizo procesos entre tus herramientas para reducir tareas manuales y errores de gestión.</p>
+          <p>¿Una automatización con Make o Zapier se te rompe o agota el cupo de la API de Holded? El conector gobierna ese cupo, nunca duplica una factura en un reintento y deja constancia de cada operación.</p>
         </article>
       </div>
     </section>
@@ -546,17 +558,17 @@
         <div>
           <table class="price-table">
             <thead>
-              <tr><th scope="col">Cobros al mes</th><th scope="col">Cuota mensual</th></tr>
+              <tr><th scope="col">Cobros al mes</th><th scope="col">Referencia diaria</th><th scope="col">Cuota mensual</th></tr>
             </thead>
             <tbody>
-              <tr><td>Hasta 90</td><td>29,90 €</td></tr>
-              <tr><td>91–240</td><td>49,90 €</td></tr>
-              <tr><td>241–450</td><td>79 €</td></tr>
-              <tr><td>451–900</td><td>109 €</td></tr>
-              <tr><td>901 o más</td><td>149 €</td></tr>
+              <tr><td>Hasta 90</td><td>hasta 3 al día</td><td>29 €</td></tr>
+              <tr><td>91–240</td><td>hasta unos 9 al día</td><td>49 €</td></tr>
+              <tr><td>241–450</td><td>hasta unos 15 al día</td><td>79 €</td></tr>
+              <tr><td>451–900</td><td>hasta unos 30 al día</td><td>99 €</td></tr>
+              <tr><td>901 o más</td><td>más de 30 al día</td><td>129 €</td></tr>
             </tbody>
           </table>
-          <p class="pricing-note">Instalación gratuita para los primeros 100 contratos. A partir del contrato 101, entre 800 y 1.500 €, según el alcance. La cuota incluye el servicio del conector; trabajos manuales extraordinarios se presupuestan aparte.</p>
+          <p class="pricing-note">Alta estándar Monei → Holded: instalación gratuita en los primeros 100 contratos (después, entre 800 y 1.500 €). La cuota incluye el conector, su mantenimiento y el soporte. Los desarrollos a medida —otras pasarelas, otros ERPs— se presupuestan aparte.</p>
         </div>
       </div>
     </section>
@@ -566,16 +578,16 @@
       <h2 id="t-process">Simple, por escrito y <em>sin sorpresas.</em></h2>
       <div class="process">
         <div class="step">
-          <h3>Hablamos</h3>
-          <p>Me cuentas cómo cobras, cómo facturas y qué particularidades tiene tu operativa.</p>
+          <h3>Me cuentas</h3>
+          <p>Cómo cobras y cómo facturas, en una llamada corta. Con eso sé si el alta estándar te encaja.</p>
         </div>
         <div class="step">
-          <h3>Configuramos</h3>
-          <p>Definimos el alcance, conectamos Monei con Holded y ajustamos las reglas a tu proceso.</p>
+          <h3>Configuración guiada</h3>
+          <p>Conectamos Monei con Holded con tres datos cerrados: tus claves de API y tu cuenta de tesorería. Alcance fijado por escrito.</p>
         </div>
         <div class="step">
-          <h3>Lo ponemos en marcha</h3>
-          <p>Validamos el flujo contigo y dejamos claros el soporte y las condiciones del servicio.</p>
+          <h3>En marcha</h3>
+          <p>Validamos el flujo con tus primeros cobros reales y el conector empieza a conciliar solo.</p>
         </div>
       </div>
     </section>
@@ -585,18 +597,18 @@
         <div>
           <p class="kicker">Contratación</p>
           <h2 id="t-pilot">Empieza a ahorrar tiempo en <em>cada cobro Bizum.</em></h2>
-          <p>Cuéntame cómo trabajas y te explico la contratación. La puesta en marcha se adapta a tu operativa y al volumen de cobros de tu negocio.</p>
+          <p>Cuéntame cómo trabajas y te confirmo si el alta estándar Monei → Holded te encaja. Si usas otra pasarela u otro ERP, lo valoramos como desarrollo a medida.</p>
           <div class="actions">
-            <a class="button button-primary" href="#contacto">Solicitar contratación <svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg></a>
+            <a class="button button-primary" href="#contacto">Solicitar información <svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg></a>
           </div>
         </div>
         <div class="checklist">
           <h3>Ideal para negocios que…</h3>
           <ul>
-            <li><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg> Cobran Bizum online o mediante enlaces de pago</li>
+            <li><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg> Facturan en Holded y cobran Bizum por enlace de pago, QR o WhatsApp</li>
             <li><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg> Usan Monei y Holded</li>
-            <li><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg> Quieren reducir la conciliación manual</li>
-            <li><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg> Tienen una tienda Shopify o WooCommerce</li>
+            <li><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg> Han sufrido cobros duplicados, pagos parciales o facturas borradas a mano</li>
+            <li><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg> Su automatización con Make o Zapier falla o agota el cupo de Holded</li>
             <li><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg> Alguien dedica horas a conciliar cobros</li>
           </ul>
         </div>
@@ -613,6 +625,13 @@
           <p class="kicker">Hola, soy Luis</p>
           <h2 id="t-about">Me gusta resolver lo que <em>hace perder tiempo.</em></h2>
           <p>Soy desarrollador de software. Construyo integraciones y automatizaciones para que las herramientas de un negocio trabajen juntas, y me interesan los problemas concretos: cobros, facturas, datos y procesos que hoy dependen de hacer clic una y otra vez.</p>
+          <p>Trabajo con contrato y encargado de tratamiento de datos (RGPD) firmados antes de conectar nada, y los datos se alojan en la Unión Europea.</p>
+          <div class="facts">
+            <div><strong>10+</strong><span>años de autónomo en España</span></div>
+            <div><strong>RGPD</strong><span>encargado de tratamiento firmado</span></div>
+            <div><strong>UE</strong><span>datos alojados en Europa</span></div>
+          </div>
+          <!-- Cuando existan: foto real, enlace a LinkedIn y páginas de Aviso legal y Privacidad -->
         </div>
       </div>
     </section>
@@ -626,7 +645,7 @@
         <div class="faq">
           <details>
             <summary>¿Con qué pasarela y ERP funciona?</summary>
-            <p>La integración disponible conecta los avisos Bizum de Monei con Holded. Si utilizas otra pasarela o ERP, cuéntame tu caso y valoramos una adaptación a medida.</p>
+            <p>Hoy conecta los avisos Bizum de Monei con Holded. Si cobras con Redsys o Stripe, o usas otro ERP como Sage 50, cuéntame tu caso: las adaptaciones se valoran como desarrollo a medida.</p>
           </details>
           <details>
             <summary>¿Se adapta a la forma de trabajar de mi negocio?</summary>
@@ -638,7 +657,7 @@
           </details>
           <details>
             <summary>¿Y si un cobro no se puede casar con su factura?</summary>
-            <p>Si hay varias facturas posibles, el importe no coincide o faltan datos, el conector no decide a ciegas. Deja el caso pendiente y te envía un enlace seguro para revisarlo.</p>
+            <p>Nunca registra a ciegas: si hay varias facturas posibles, el importe no coincide o es un pago parcial, bloquea el caso y te envía un enlace seguro para resolverlo en 1 clic, sin abrir Holded. Tu contabilidad no se ensucia.</p>
           </details>
           <details>
             <summary>¿Qué pasa con los datos de mis clientes?</summary>
@@ -646,11 +665,23 @@
           </details>
           <details>
             <summary>¿Cuánto cuesta?</summary>
-            <p>La cuota empieza en 29,90 € al mes y depende del volumen mensual de cobros. La instalación es gratuita para los primeros 100 contratos; a partir de ahí, se presupuesta según el alcance. Consulta la tabla de precios.</p>
+            <p>La cuota empieza en 29 € al mes y depende del volumen mensual de cobros. La instalación es gratuita para los primeros 100 contratos; a partir de ahí, se presupuesta según el alcance. Consulta la tabla de precios.</p>
           </details>
           <details>
             <summary>¿Gestiona devoluciones?</summary>
             <p>El conector avisa si Monei notifica una devolución, pero la emisión del abono en Holded se gestiona manualmente.</p>
+          </details>
+          <details>
+            <summary>Mi tienda Shopify o WooCommerce ya crea las facturas, ¿me sirve?</summary>
+            <p>Sí: el conector encuentra esas facturas en Holded y concilia su cobro. Y cubre lo que el plugin de la tienda no controla: cobros por enlace de pago o QR, pedidos que se quedan sin marcar como pagados y el cuadre de la liquidación de la pasarela.</p>
+          </details>
+          <details>
+            <summary>¿Cómo sé que a fin de mes todo cuadra?</summary>
+            <p>El conector audita al cierre de cada mes —o cuando tú lo pides— que el 100 % de los cobros Bizum de Monei siguen registrados en Holded. Si alguien borró una factura, eliminó un cobro o cambió un total, lo detecta y te dice exactamente cuál fue.</p>
+          </details>
+          <details>
+            <summary>¿Necesito un plan concreto de Holded?</summary>
+            <p>Funciona con cualquier plan de Holded con acceso a la API. El conector gobierna el cupo de llamadas de tu plan —guarda copia local y reserva el cupo para las escrituras— para no agotarlo a mitad de mes.</p>
           </details>
         </div>
       </div>
@@ -659,11 +690,31 @@
     <section class="wrap section reveal" id="contacto" aria-labelledby="t-contact">
       <div class="contact">
         <p class="kicker">¿Hablamos?</p>
-        <h2 id="t-contact">Solicita la contratación <em>del conector.</em></h2>
+        <h2 id="t-contact">Pide información <em>sobre el conector.</em></h2>
         <p class="lead">Cuéntame cómo cobras y facturas. Revisamos tu caso, resolvemos tus dudas y coordinamos la puesta en marcha.</p>
+        <form class="contact-form" id="form-contratacion">
+          <div class="field">
+            <label for="f-tramo">Cobros Bizum al mes</label>
+            <select id="f-tramo" name="tramo">
+              <option value="hasta 90">Hasta 90</option>
+              <option value="entre 91 y 240">Entre 91 y 240</option>
+              <option value="entre 241 y 450">Entre 241 y 450</option>
+              <option value="entre 451 y 900">Entre 451 y 900</option>
+              <option value="más de 900">Más de 900</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="f-contacto">Tu email o teléfono</label>
+            <input id="f-contacto" name="contacto" type="text" autocomplete="email" placeholder="nombre@empresa.es">
+          </div>
+          <button class="button button-primary" type="submit">
+            Solicitar información <svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg>
+          </button>
+        </form>
+        <p class="form-alt">Se abrirá WhatsApp con tu solicitud ya escrita. Si lo prefieres, escríbeme directamente:</p>
         <div class="actions">
-          <a class="button button-primary" href="https://wa.me/5531992366226?text=Hola%20Luis%2C%20quiero%20contratar%20el%20conector%20Bizum%20Monei%20con%20Holded." target="_blank" rel="noopener">
-            <svg class="icon" aria-hidden="true"><use href="#i-chat"/></svg> Solicitar contratación por WhatsApp
+          <a class="button button-primary" href="https://wa.me/5531992366226?text=Hola%20Luis%2C%20quiero%20informaci%C3%B3n%20sobre%20el%20conector%20Bizum%20Monei%20con%20Holded." target="_blank" rel="noopener">
+            <svg class="icon" aria-hidden="true"><use href="#i-chat"/></svg> Solicitar información por WhatsApp
           </a>
           <a class="button button-ghost" href="mailto:contacto@luisriego.dev">
             <svg class="icon" aria-hidden="true"><use href="#i-mail"/></svg> contacto@luisriego.dev
@@ -677,6 +728,8 @@
   <footer>
     <div class="wrap footer-inner">
       <span>© <span id="year">2026</span> Luis Riego · luisriego.dev</span>
+      <span class="footer-note">Servicio B2B con contrato y encargado de tratamiento RGPD · Datos alojados en la UE</span>
+      <!-- Pendiente antes de captar clientes: páginas de Aviso legal y Privacidad (art. 10 LSSI-CE) -->
       <div class="footer-links">
         <a href="mailto:contacto@luisriego.dev">Email</a>
         <a href="https://wa.me/5531992366226" target="_blank" rel="noopener">WhatsApp</a>
@@ -689,6 +742,16 @@
       var root = document.documentElement;
       root.classList.remove('no-js');
       document.getElementById('year').textContent = new Date().getFullYear();
+      var form = document.getElementById('form-contratacion');
+      if (form) {
+        form.addEventListener('submit', function (ev) {
+          ev.preventDefault();
+          var tramo = form.elements.tramo.value;
+          var contacto = form.elements.contacto.value.trim() || '(pendiente)';
+          var texto = 'Hola Luis, quiero información sobre el conector Bizum Monei → Holded. Recibo ' + tramo + ' cobros Bizum al mes. Mi contacto: ' + contacto + '.';
+          window.open('https://wa.me/5531992366226?text=' + encodeURIComponent(texto), '_blank', 'noopener');
+        });
+      }
       var items = document.querySelectorAll('.reveal');
       if (!('IntersectionObserver' in window) || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
       root.classList.add('reveal-ready');
