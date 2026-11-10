@@ -363,6 +363,12 @@
     .contact-form input { min-width: min(260px, 100%); }
     .contact-form ::placeholder { color: rgba(29, 37, 18, .55); }
     .form-alt { margin: 20px 0 0; color: #3d4c22; font-size: 14px; }
+    .device-mobile { display: none; }
+    .draft-preview { margin-top: 20px; padding: 18px; border: 1px solid rgba(29, 37, 18, .25); border-radius: 6px; background: rgba(255, 255, 255, .28); }
+    .draft-preview[hidden] { display: none; }
+    .draft-preview p { margin: 0 0 10px; }
+    .draft-preview pre { max-height: 220px; overflow: auto; margin: 0 0 14px; font: inherit; font-size: 14px; white-space: pre-wrap; overflow-wrap: anywhere; }
+    .copy-status { min-height: 1.5em; margin: 8px 0 0; color: #3d4c22; font-size: 14px; }
     .contact .button-primary { background: var(--lime-ink); color: var(--paper); }
     .contact .button-primary:hover { background: #2d3a1c; }
     .contact .button-ghost { border-color: rgba(29, 37, 18, .35); color: var(--lime-ink); }
@@ -397,6 +403,12 @@
       .actions .button { width: 100%; }
       .contact .actions { flex-direction: column; }
       .contact-form { flex-direction: column; align-items: stretch; }
+    }
+    @media (hover: none) and (pointer: coarse) {
+      .device-desktop { display: none !important; }
+      .form-alt.device-mobile { display: block; }
+      .button.device-mobile { display: inline-flex; }
+      .footer-links .device-mobile { display: inline; }
     }
     @media (prefers-reduced-motion: reduce) {
       html { scroll-behavior: auto; }
@@ -711,15 +723,27 @@
             Solicitar información <svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg>
           </button>
         </form>
-        <p class="form-alt">Se abrirá WhatsApp con tu solicitud ya escrita. Si lo prefieres, escríbeme directamente:</p>
+        <p class="form-alt device-mobile">Se abrirá WhatsApp con tu solicitud ya escrita. Si lo prefieres, también puedes escribirme por correo:</p>
+        <p class="form-alt device-desktop">Al enviar, se abrirá tu aplicación de correo con la solicitud preparada. Si usas Gmail en el navegador, podrás copiar el texto y pegarlo directamente.</p>
         <div class="actions">
-          <a class="button button-primary" href="https://wa.me/5531992366226?text=Hola%20Luis%2C%20quiero%20informaci%C3%B3n%20sobre%20el%20conector%20Bizum%20Monei%20con%20Holded." target="_blank" rel="noopener">
+          <a class="button button-primary device-mobile" href="https://wa.me/5531992366226?text=Hola%20Luis%2C%20quiero%20informaci%C3%B3n%20sobre%20el%20conector%20Bizum%20Monei%20con%20Holded." target="_blank" rel="noopener">
             <svg class="icon" aria-hidden="true"><use href="#i-chat"/></svg> Solicitar información por WhatsApp
           </a>
-          <a class="button button-ghost" href="mailto:contacto@luisriego.dev">
+          <a class="button button-ghost" data-copy-email href="mailto:contacto@luisriego.dev">
             <svg class="icon" aria-hidden="true"><use href="#i-mail"/></svg> contacto@luisriego.dev
           </a>
         </div>
+        <div class="draft-preview" id="draft-preview" hidden>
+          <p><strong>Solicitud preparada para <span id="draft-recipient">contacto@luisriego.dev</span></strong></p>
+          <pre id="draft-text"></pre>
+          <div class="actions">
+            <a class="button button-ghost" id="draft-mailto" href="mailto:contacto@luisriego.dev">
+              <svg class="icon" aria-hidden="true"><use href="#i-mail"/></svg> Abrir correo con la solicitud
+            </a>
+            <button class="button button-ghost" id="copy-draft" type="button">Copiar solicitud completa</button>
+          </div>
+        </div>
+        <p class="copy-status" id="contact-status" role="status" aria-live="polite"></p>
         <!-- Añadir aquí un botón «Agendar una llamada» cuando exista el enlace de agenda (Cal.com, Calendly…) -->
       </div>
     </section>
@@ -732,7 +756,7 @@
       <!-- Pendiente antes de captar clientes: páginas de Aviso legal y Privacidad (art. 10 LSSI-CE) -->
       <div class="footer-links">
         <a href="mailto:contacto@luisriego.dev">Email</a>
-        <a href="https://wa.me/5531992366226" target="_blank" rel="noopener">WhatsApp</a>
+        <a class="device-mobile" href="https://wa.me/5531992366226" target="_blank" rel="noopener">WhatsApp</a>
       </div>
     </div>
   </footer>
@@ -743,15 +767,58 @@
       root.classList.remove('no-js');
       document.getElementById('year').textContent = new Date().getFullYear();
       var form = document.getElementById('form-contratacion');
+      var mobileContact = window.matchMedia('(hover: none) and (pointer: coarse)');
+      var contactStatus = document.getElementById('contact-status');
+      var draftText = document.getElementById('draft-text');
+      var draftPreview = document.getElementById('draft-preview');
+      var draftMailto = document.getElementById('draft-mailto');
+      function copyText(text, successMessage) {
+        function fallbackCopy() {
+          var temporary = document.createElement('textarea');
+          temporary.value = text;
+          temporary.setAttribute('readonly', '');
+          temporary.style.position = 'fixed';
+          temporary.style.opacity = '0';
+          document.body.appendChild(temporary);
+          temporary.select();
+          var copied = document.execCommand('copy');
+          temporary.remove();
+          contactStatus.textContent = copied ? successMessage : 'No se pudo copiar. Selecciona y copia el texto manualmente.';
+        }
+        if (navigator.clipboard && window.isSecureContext) {
+          navigator.clipboard.writeText(text).then(function () {
+            contactStatus.textContent = successMessage;
+          }).catch(fallbackCopy);
+        } else {
+          fallbackCopy();
+        }
+      }
       if (form) {
         form.addEventListener('submit', function (ev) {
           ev.preventDefault();
           var tramo = form.elements.tramo.value;
           var contacto = form.elements.contacto.value.trim() || '(pendiente)';
           var texto = 'Hola Luis, quiero información sobre el conector Bizum Monei → Holded. Recibo ' + tramo + ' cobros Bizum al mes. Mi contacto: ' + contacto + '.';
-          window.open('https://wa.me/5531992366226?text=' + encodeURIComponent(texto), '_blank', 'noopener');
+          if (mobileContact.matches) {
+            window.open('https://wa.me/5531992366226?text=' + encodeURIComponent(texto), '_blank', 'noopener');
+            return;
+          }
+          var asunto = 'Información sobre el conector Bizum Monei → Holded';
+          draftText.textContent = 'Para: contacto@luisriego.dev\nAsunto: ' + asunto + '\n\n' + texto;
+          draftMailto.href = 'mailto:contacto@luisriego.dev?subject=' + encodeURIComponent(asunto) + '&body=' + encodeURIComponent(texto);
+          draftPreview.hidden = false;
+          contactStatus.textContent = 'Solicitud preparada. Se abrirá tu aplicación de correo; también puedes copiarla para usar Gmail en el navegador.';
+          window.location.href = draftMailto.href;
         });
       }
+      document.querySelectorAll('[data-copy-email]').forEach(function (link) {
+        link.addEventListener('click', function () {
+          copyText('contacto@luisriego.dev', 'Dirección copiada: contacto@luisriego.dev');
+        });
+      });
+      document.getElementById('copy-draft').addEventListener('click', function () {
+        copyText(draftText.textContent, 'Solicitud completa copiada. Puedes pegarla en Gmail u otro correo.');
+      });
       var items = document.querySelectorAll('.reveal');
       if (!('IntersectionObserver' in window) || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
       root.classList.add('reveal-ready');
